@@ -10,11 +10,18 @@ Produces a two-panel engineering figure:
 from __future__ import annotations
 
 import os
+import sys
 from typing import Optional, Tuple
 
 import matplotlib
 
-if os.environ.get("MPLBACKEND") is None and not os.environ.get("DISPLAY"):
+# Headless Linux (servers, CI, containers) has no screen: render to files only.
+if (
+    sys.platform.startswith("linux")
+    and os.environ.get("MPLBACKEND") is None
+    and not os.environ.get("DISPLAY")
+    and not os.environ.get("WAYLAND_DISPLAY")
+):
     matplotlib.use("Agg")
 
 import matplotlib.pyplot as plt
@@ -96,12 +103,12 @@ def plot_results(
 
     xmin, xmax, ymin, ymax = mesh.bounding_box()
     aspect = (xmax - xmin) / max(ymax - ymin, 1e-300)
+    wide = aspect > 2.5  # long, slender parts stack the panels vertically
     if figsize is None:
-        figsize = (16, 5.5) if aspect > 2.5 else (15, 7)
-    wide = aspect > 2.5
+        figsize = (14, 6.5) if wide else (15, 7)
     fig, axes = plt.subplots(
         2 if wide else 1, 1 if wide else 2,
-        figsize=(14, 6.5) if wide else figsize,
+        figsize=figsize,
         constrained_layout=True,
     )
     ax0, ax1 = axes
