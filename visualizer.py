@@ -171,7 +171,7 @@ def plot_results(
     )
     ax1.set_title(
         f"Von Mises on deformed shape (scale x{scale:.4g}, max |u| = "
-        f"{results.max_displacement:.4e} {length_unit}); dashed = undeformed",
+        f"{results.max_displacement:.4e} {length_unit})\ndashed outline = undeformed shape",
         fontsize=11,
     )
     ax1.set_xlabel(f"x [{length_unit}]")
